@@ -16,4 +16,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 8080
 
-CMD php -S 0.0.0.0:8080 -t public/
+CMD php artisan migrate --force && php artisan db:seed --force && php artisan storage:link --force ; php -S 0.0.0.0:8080 -t public/
