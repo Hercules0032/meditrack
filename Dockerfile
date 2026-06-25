@@ -1,19 +1,28 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.3-apache
 
-RUN apk update && apk add --no-cache \
-    libzip-dev zip unzip libpng-dev libpq-dev libxml2-dev icu-dev shadow curl
+# System libraries + PHP extensions Laravel needs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libzip-dev zip unzip libpng-dev libxml2-dev libicu-dev libsqlite3-dev curl \
+    && docker-php-ext-install pdo pdo_sqlite zip gd bcmath xml intl \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install pdo pdo_pgsql zip gd bcmath xml intl
-
+# Composer binary
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /app
-COPY . /app
+# Apache virtual host that serves Laravel's public/ directory
+COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs --no-scripts
+WORKDIR /var/www/html
+COPY . /var/www/html
 
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Install PHP dependencies (no dev tooling, no artisan scripts at build time)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs --no-scripts \
+    && chown -R www-data:www-data storage bootstrap/cache database
+
+# Startup script: configure port, run migrations/seed, launch Apache
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 8080
-
-CMD php artisan migrate --force && php artisan db:seed --force && php artisan storage:link --force ; php -S 0.0.0.0:8080 -t public/
+ENTRYPOINT ["entrypoint.sh"]
