@@ -2,9 +2,50 @@
 
 Hospital & Clinic Management System built with Laravel, featuring Admin, Doctor, and Patient roles.
 
+## About the Project
+
+MediTrack is a full-stack, role-based hospital and clinic management platform built with
+**Laravel 13 / PHP 8.4**. It digitizes the core clinic workflow end to end: patients book
+appointments with doctors, doctors confirm them and issue prescriptions, and administrators
+oversee the entire operation. The application enforces strict separation between user roles
+with custom middleware, serves both a server-rendered web UI and a token-authenticated REST
+API, and ships with email notifications, custom validation rules, and English/Bengali
+localization.
+
+## Features
+
+- **Role-based access control** — Admin, Doctor, and Patient roles isolated by dedicated
+  middleware; each role lands on its own dashboard and is blocked (HTTP 403) from areas
+  outside its scope.
+- **Appointment lifecycle** — Patients book appointments with a chosen doctor; doctors
+  review and confirm them (triggering a confirmation email); status flows through
+  pending → confirmed → cancelled.
+- **Prescriptions** — Doctors issue prescriptions against confirmed appointments; patients
+  view them from their portal, with a "prescription ready" notification.
+- **Medical records** — Patients upload and manage their own medical reports.
+- **Admin operations** — Manage patients, doctors, and appointments, including bulk actions
+  and appointment status overrides.
+- **REST API (Laravel Sanctum)** — Token-authenticated endpoints for signup/login and CRUD
+  over patients, appointments, and prescriptions, ready for mobile or third-party clients.
+- **Internationalization** — Live English ⇄ Bengali switching with session persistence.
+- **Custom validation rules** — Domain-specific rules such as `FutureDate` (appointments
+  must be in the future) and `FutureAdultAge`.
+- **Email notifications** — Mailable classes for appointment confirmations and prescription
+  readiness.
+
+## Tech Stack
+
+| Layer          | Technology                                          |
+|----------------|-----------------------------------------------------|
+| Backend        | Laravel 13, PHP 8.4                                 |
+| Authentication | Session auth (web) + Laravel Sanctum tokens (API)   |
+| Frontend       | Blade templates, Bootstrap 5, Bootstrap Icons       |
+| Database       | MySQL / SQLite, Eloquent ORM                        |
+| Tooling        | Composer, Vite, Laravel Pint, PHPUnit               |
+
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.4+
 - Composer
 - MySQL (or SQLite for local dev)
 - Node.js (optional, for frontend assets)
