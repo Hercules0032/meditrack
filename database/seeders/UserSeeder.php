@@ -17,21 +17,6 @@ class UserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Known demo accounts so each role can be logged into directly.
-        User::create([
-            'name' => 'Dr. Demo',
-            'email' => 'doctor@meditrack.com',
-            'password' => Hash::make('password'),
-            'role' => 'doctor',
-        ]);
-
-        User::create([
-            'name' => 'Patient Demo',
-            'email' => 'patient@meditrack.com',
-            'password' => Hash::make('password'),
-            'role' => 'patient',
-        ]);
-
         User::factory()->count(5)->create(['role' => 'doctor']);
         User::factory()->count(50)->create(['role' => 'patient']);
     }
